@@ -79,7 +79,10 @@ class JobListView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        jobs = Job.objects.all()
+        if request.user.user_type == 'recruiter':
+            jobs = Job.objects.filter(posted_by=request.user)
+        else:
+            jobs = Job.objects.all()
         serializer = JobSerializer(jobs, many=True)
         return Response(serializer.data)
 
